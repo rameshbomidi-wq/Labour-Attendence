@@ -1,0 +1,25 @@
+{
+  "name": "లేబర్ ఖర్చుల మేనేజర్",
+  "short_name": "లేబర్ మేనేజర్",
+  "description": "కూలీల హాజరు, చెల్లింపులు, బాకీ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef2ef",
+  "theme_color": "#1b6b3a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

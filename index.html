@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b6b3a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="లేబర్ మేనేజర్">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>లేబర్ ఖర్చుల మేనేజర్ | Labour Expense Manager</title>
+<style>
+:root{--g:#1b6b3a;--g2:#2e9d57;--bg:#eef2ef;--card:#fff;--tx:#1d2b22;--mut:#6b7a70;--red:#d63a3a;--org:#e08a00;--blue:#1e6fd0;--bd:#d9e1dc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans Telugu','Segoe UI',Calibri,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;padding-bottom:50px}
+header{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:18px}
+header small{opacity:.85;font-size:12px}
+nav{background:#14502b;display:flex;overflow-x:auto;position:sticky;top:0;z-index:20}
+nav button{flex:1;min-width:92px;padding:11px 8px;background:none;border:none;color:#cfe8d8;font-size:13px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{color:#fff;background:rgba(255,255,255,.12);border-bottom-color:#ffd54f;font-weight:600}
+main{max-width:1200px;margin:0 auto;padding:12px}
+.sec{display:none}.sec.on{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.card{background:var(--card);border-radius:10px;padding:12px;border-left:5px solid var(--g2);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card.r{border-color:var(--red)}.card.o{border-color:var(--org)}.card.b{border-color:var(--blue)}
+.card .l{font-size:12px;color:var(--mut)}.card .v{font-size:21px;font-weight:700;margin-top:3px}
+.box{background:var(--card);border-radius:10px;padding:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.box h3{font-size:15px;margin-bottom:10px;color:var(--g)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:10px}
+.bar label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+input,select,textarea{padding:7px 9px;border:1px solid var(--bd);border-radius:6px;font-size:14px;font-family:inherit;background:#fff;color:var(--tx)}
+input:focus,select:focus{outline:2px solid var(--g2);border-color:var(--g2)}
+button.btn{padding:8px 13px;border:none;border-radius:6px;background:var(--g);color:#fff;cursor:pointer;font-size:13px;font-family:inherit}
+button.btn:hover{filter:brightness(1.1)}
+.btn.sec2{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn.red{background:var(--red)}.btn.blue{background:var(--blue)}.btn.org{background:var(--org)}
+.btn.sm{padding:4px 8px;font-size:12px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;background:#fff}
+th{background:var(--g);color:#fff;padding:8px;font-size:13px;text-align:left;white-space:nowrap;position:sticky;top:0}
+td{padding:7px 8px;border-bottom:1px solid #e6ece8;vertical-align:middle}
+tr:hover td{background:#f5faf7}
+td.n,th.n{text-align:right}
+.badge{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-ok{background:#e1f5e8;color:#16743a}.b-risk{background:#fff0d6;color:#a35f00}.b-stop{background:#fde2e2;color:#b32424}.b-new{background:#e3edfb;color:#1b56a5}
+.pos{color:var(--red);font-weight:600}.neg{color:var(--org);font-weight:600}.zero{color:var(--g2);font-weight:600}
+.att button{padding:6px 11px;border:1px solid var(--bd);background:#fff;border-radius:6px;cursor:pointer;font-weight:700;margin-right:3px}
+.att button.P.on{background:#2e9d57;color:#fff;border-color:#2e9d57}
+.att button.H.on{background:var(--org);color:#fff;border-color:var(--org)}
+.att button.A.on{background:var(--red);color:#fff;border-color:var(--red)}
+.empty{text-align:center;color:var(--mut);padding:24px}
+.alert{padding:8px 10px;border-radius:6px;margin-bottom:6px;font-size:13px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.alert.s{background:#fde2e2}.alert.r{background:#fff0d6}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50;padding:12px}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:12px;padding:16px;width:100%;max-width:440px;max-height:92vh;overflow:auto}
+.mbox h3{margin-bottom:10px;color:var(--g)}
+.mbox label{display:block;font-size:12px;color:var(--mut);margin-top:8px}
+.mbox input,.mbox select{width:100%;margin-top:3px}
+.mact{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+#toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 16px;border-radius:20px;opacity:0;transition:.3s;z-index:99;pointer-events:none;font-size:13px}
+#toast.on{opacity:1}
+footer{position:fixed;bottom:0;left:0;right:0;background:#14502b;color:#cfe8d8;font-size:12px;padding:5px 14px;display:flex;justify-content:space-between;z-index:10}
+.hint{font-size:12px;color:var(--mut);margin-top:6px}
+.svgc text{font-size:10px;fill:#6b7a70}
+@media print{header,nav,footer,.bar,.noprint,button{display:none!important}.sec{display:none!important}.sec.on{display:block!important}body{background:#fff}}
+@media(max-width:600px){.card .v{font-size:18px}td,th{padding:6px 5px;font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>📊 లేబర్ ఖర్చుల మేనేజర్</h1><small>Labour Expense Manager — కూలీల హాజరు, చెల్లింపులు, బాకీ</small></div>
+  <div id="hdrDate" style="font-size:13px"></div>
+</header>
+<nav id="nav">
+  <button data-t="dash" class="on">📈 డ్యాష్‌బోర్డ్</button>
+  <button data-t="lab">👷 కూలీలు</button>
+  <button data-t="att">📅 హాజరు</button>
+  <button data-t="pay">💰 చెల్లింపులు</button>
+  <button data-t="rep">📑 రిపోర్టులు</button>
+  <button data-t="set">⚙️ సెట్టింగ్స్</button>
+</nav>
+<main>
+
+<!-- DASHBOARD -->
+<section class="sec on" id="dash">
+  <div class="cards" id="dCards"></div>
+  <div class="grid2">
+    <div class="box"><h3>గత 14 రోజుల హాజరు (Attendance)</h3><div id="dChart1"></div></div>
+    <div class="box"><h3>ఈ నెల కూలీల వారీ ఖర్చు (₹)</h3><div id="dChart2"></div></div>
+  </div>
+  <div class="grid2">
+    <div class="box"><h3>⚠️ పని ఆపిన / ప్రమాదంలో ఉన్న కూలీలు</h3><div id="dAlerts"></div></div>
+    <div class="box"><h3>💸 ఎక్కువ బాకీ ఉన్నవారు</h3><div id="dDues"></div></div>
+  </div>
+</section>
+
+<!-- LABOUR -->
+<section class="sec" id="lab">
+  <div class="box">
+    <div class="bar">
+      <button class="btn" onclick="openLab()">➕ కొత్త కూలీ</button>
+      <label>వెతకండి<input id="labQ" placeholder="పేరు / మొబైల్" oninput="renderLab()"></label>
+      <label>స్థితి<select id="labF" onchange="renderLab()"><option value="">అందరూ</option><option value="ok">పని చేస్తున్నారు</option><option value="risk">ప్రమాదం</option><option value="stop">ఆపారు</option></select></label>
+      <button class="btn sec2" onclick="exportXls('labour')">📤 Excel</button>
+    </div>
+    <div class="tw"><table><thead><tr><th>#</th><th>పేరు</th><th>మొబైల్</th><th>చిరునామా</th><th>పే టైప్</th><th class="n">రోజు కూలి ₹</th><th class="n">బాకీ ₹</th><th>స్థితి</th><th>చర్యలు</th></tr></thead><tbody id="labBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ATTENDANCE -->
+<section class="sec" id="att">
+  <div class="box">
+    <div class="bar">
+      <label>తేదీ<input type="date" id="attDate" onchange="renderAtt()"></label>
+      <button class="btn sec2" onclick="shiftDay(-1)">◀ ముందు రోజు</button>
+      <button class="btn sec2" onclick="shiftDay(1)">తర్వాత రోజు ▶</button>
+      <button class="btn sec2" onclick="attToday()">ఈ రోజు</button>
+      <button class="btn" onclick="markAll('P')">✅ అందరికీ హాజరు</button>
+      <button class="btn org" onclick="copyYesterday()">📋 నిన్నటి లాగా</button>
+    </div>
+    <div class="hint">P = పూర్తి రోజు, H = సగం రోజు, A = గైర్హాజరు. మళ్లీ అదే బటన్ నొక్కితే తొలగిపోతుంది. కూలి మొత్తం మార్చవచ్చు.</div>
+  </div>
+  <div class="box">
+    <div id="attSum" style="margin-bottom:8px;font-weight:600"></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>కూలీ</th><th>హాజరు</th><th class="n">రోజు కూలి ₹</th><th>పని / గమనిక</th><th class="n">మొత్తం ₹</th></tr></thead><tbody id="attBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- PAYMENTS -->
+<section class="sec" id="pay">
+  <div class="box">
+    <h3>కొత్త చెల్లింపు</h3>
+    <div class="bar">
+      <label>తేదీ<input type="date" id="pDate"></label>
+      <label>కూలీ<select id="pLab" onchange="payHint()"></select></label>
+      <label>రకం<select id="pType"><option value="Payment">చెల్లింపు (Payment)</option><option value="Advance">అడ్వాన్స్ (Advance)</option></select></label>
+      <label>మొత్తం ₹<input type="number" id="pAmt" min="0" step="1" style="width:110px"></label>
+      <label>గమనిక<input id="pNote" placeholder="Cash / UPI..." style="width:160px"></label>
+      <button class="btn" onclick="addPay()">💾 సేవ్</button>
+    </div>
+    <div class="hint" id="pHint"></div>
+  </div>
+  <div class="box">
+    <div class="bar">
+      <label>కూలీ ఫిల్టర్<select id="pFil" onchange="renderPay()"></select></label>
+      <button class="btn sec2" onclick="exportXls('payment')">📤 Excel</button>
+    </div>
+    <div class="tw"><table><thead><tr><th>#</th><th>తేదీ</th><th>కూలీ</th><th>రకం</th><th class="n">మొత్తం ₹</th><th>గమనిక</th><th></th></tr></thead><tbody id="payBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- REPORTS -->
+<section class="sec" id="rep">
+  <div class="box">
+    <div class="bar">
+      <label>నుండి<input type="date" id="rFrom" onchange="renderRep()"></label>
+      <label>వరకు<input type="date" id="rTo" onchange="renderRep()"></label>
+      <label>కూలీ<select id="rLab" onchange="renderRep()"></select></label>
+      <button class="btn sec2" onclick="setRange('week')">ఈ వారం</button>
+      <button class="btn sec2" onclick="setRange('month')">ఈ నెల</button>
+      <button class="btn sec2" onclick="setRange('all')">మొత్తం</button>
+      <button class="btn blue" onclick="window.print()">🖨️ ప్రింట్ / PDF</button>
+      <button class="btn sec2" onclick="exportXls('report')">📤 Excel</button>
+    </div>
+  </div>
+  <div class="cards" id="rCards"></div>
+  <div class="box">
+    <h3>కూలీల వారీ సారాంశం (ఎంచుకున్న తేదీల్లో)</h3>
+    <div class="tw"><table><thead><tr><th>కూలీ</th><th class="n">పూర్తి రోజులు</th><th class="n">సగం రోజులు</th><th class="n">సంపాదన ₹</th><th class="n">చెల్లింపు ₹</th><th class="n">మొత్తం బాకీ ₹ (ఇప్పటివరకు)</th><th class="noprint">చర్య</th></tr></thead><tbody id="rBody"></tbody></table></div>
+  </div>
+  <div class="box" id="ledgerBox" style="display:none">
+    <h3 id="ledgerTitle"></h3>
+    <div class="tw"><table><thead><tr><th>తేదీ</th><th>వివరం</th><th class="n">జమ (కూలి) ₹</th><th class="n">చెల్లింపు ₹</th><th class="n">బాకీ ₹</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section class="sec" id="set">
+  <div class="box">
+    <h3>స్టాపేజ్ నియమాలు</h3>
+    <div class="bar">
+      <label>"ప్రమాదం" అని చూపే రోజులు (పని లేకుండా)<input type="number" id="sWarn" min="1" style="width:90px"></label>
+      <label>"ఆపారు" అని చూపే రోజులు<input type="number" id="sStop" min="2" style="width:90px"></label>
+      <button class="btn" onclick="saveSet()">💾 సేవ్</button>
+    </div>
+  </div>
+  <div class="box">
+    <h3>బ్యాకప్ / రీస్టోర్</h3>
+    <div class="bar">
+      <button class="btn" onclick="backup()">⬇️ బ్యాకప్ డౌన్‌లోడ్ (JSON)</button>
+      <label>రీస్టోర్ ఫైల్<input type="file" id="restoreFile" accept=".json" onchange="restore(event)"></label>
+      <button class="btn red" onclick="wipe()">🗑️ మొత్తం డేటా తొలగించు</button>
+    </div>
+    <div class="hint">డేటా ఈ బ్రౌజర్‌లో మాత్రమే సేవ్ అవుతుంది. వారానికి ఒకసారి బ్యాకప్ తీసి WhatsApp/Drive లో భద్రపరచండి. ఫోన్ మార్చినప్పుడు రీస్టోర్ చేయండి.</div>
+  </div>
+</section>
+</main>
+
+<!-- Labour modal -->
+<div class="modal" id="labModal"><div class="mbox">
+  <h3 id="labMT">కొత్త కూలీ</h3>
+  <input type="hidden" id="lId">
+  <label>పేరు *<input id="lName"></label>
+  <label>మొబైల్<input id="lMob" type="tel" maxlength="10" inputmode="numeric"></label>
+  <label>చిరునామా<input id="lAddr"></label>
+  <label>పే టైప్<select id="lType"><option value="Fix">ఫిక్స్ (Fix)</option><option value="Undecided">నిర్ణయించలేదు (Undecided)</option></select></label>
+  <label>రోజు కూలి ₹<input id="lRate" type="number" min="0" step="1"></label>
+  <div class="mact"><button class="btn sec2" onclick="closeM()">రద్దు</button><button class="btn" onclick="saveLab()">💾 సేవ్</button></div>
+</div></div>
+
+<div id="toast"></div>
+<footer><span>లేబర్ ఖర్చుల మేనేజర్ v2.0 · ఆఫ్‌లైన్ · ఆటో-సేవ్ ✓</span><span id="fCount"></span></footer>
+
+<script>
+const KEY='lemDataV2';
+let DB={labour:[],att:[],pay:[],set:{warn:3,stop:7}};
+let seq=0;
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now()*1000+(seq++%1000);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>'₹'+(Math.round((n||0)*100)/100).toLocaleString('en-IN',{maximumFractionDigits:2});
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>dstr(new Date());
+const toUTC=s=>{const p=s.split('-');return Date.UTC(+p[0],+p[1]-1,+p[2])};
+const diffDays=(a,b)=>Math.round((toUTC(b)-toUTC(a))/864e5);
+const addDays=(s,n)=>{const p=s.split('-');return dstr(new Date(+p[0],+p[1]-1,+p[2]+n))};
+const fmtD=s=>{if(!s)return'-';const p=s.split('-');return p[2]+'-'+p[1]+'-'+p[0]};
+const earn=a=>a.st==='P'?a.amt:a.st==='H'?a.amt/2:0;
+
+/* ---------- storage ---------- */
+function load(){
+  try{
+    let s=localStorage.getItem(KEY);
+    if(s){DB=Object.assign(DB,JSON.parse(s));}
+    else{ // migrate from old version
+      const o=localStorage.getItem('lemData');
+      if(o){const d=JSON.parse(o);
+        DB.labour=(d.labour||[]).map(l=>({id:+l.id,name:l.name||'',mobile:l.mobile||'',addr:l.address||'',type:l.payType==='Fix'?'Fix':'Undecided',rate:+l.dailyRate||0,off:false,joined:today()}));
+        DB.att=(d.attendance||[]).filter(a=>a.labourId).map(a=>({id:uid(),date:a.date,lid:+a.labourId,st:'P',amt:a.halfDay?(+a.amount||0):(+a.amount||0),note:a.category||''})).map((x,i)=>{const src=d.attendance.filter(a=>a.labourId)[i];if(src.halfDay)x.st='H';return x});
+        DB.pay=(d.payment||[]).filter(p=>p.labourId).map(p=>({id:uid(),date:p.date,lid:+p.labourId,amt:+p.amount||0,type:'Payment',note:p.remarks||''}));
+      }
+    }
+  }catch(e){console.error(e)}
+  DB.set=Object.assign({warn:3,stop:7},DB.set||{});
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('⚠️ సేవ్ కాలేదు: స్టోరేజ్ నిండింది')}}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ---------- calculations ---------- */
+const lab=id=>DB.labour.find(l=>l.id===+id);
+const lname=id=>{const l=lab(id);return l?l.name:'(తొలగించారు)'};
+function totals(id){
+  const e=DB.att.filter(a=>a.lid===id).reduce((s,a)=>s+earn(a),0);
+  const p=DB.pay.filter(x=>x.lid===id).reduce((s,x)=>s+x.amt,0);
+  return{earned:e,paid:p,bal:e-p};
+}
+function lastWork(id){
+  let m='';DB.att.forEach(a=>{if(a.lid===id&&a.st!=='A'&&a.date>m)m=a.date});return m;
+}
+function status(l){
+  if(l.off)return{k:'stop',t:'ఆపారు (మాన్యువల్)',d:null};
+  const lw=lastWork(l.id);
+  const base=lw||l.joined||today();
+  const d=Math.max(0,diffDays(base,today()));
+  if(!lw&&d<=DB.set.warn)return{k:'new',t:'కొత్త',d};
+  if(d<=DB.set.warn)return{k:'ok',t:'పని చేస్తున్నారు',d};
+  if(d<=DB.set.stop)return{k:'risk',t:'ప్రమాదం',d};
+  return{k:'stop',t:'ఆపారు',d};
+}
+const badge=s=>`<span class="badge b-${s.k==='new'?'new':s.k}">${s.t}</span>`;
+const balCls=b=>b>0.005?'pos':b<-0.005?'neg':'zero';
+
+/* ---------- navigation ---------- */
+$('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.sec').forEach(x=>x.classList.toggle('on',x.id===b.dataset.t));
+  renderAll();window.scrollTo(0,0);
+});
+function renderAll(){
+  $('hdrDate').textContent='📅 '+fmtD(today());
+  $('fCount').textContent='కూలీలు: '+DB.labour.length;
+  fillSelects();
+  const on=document.querySelector('.sec.on').id;
+  ({dash:renderDash,lab:renderLab,att:renderAtt,pay:renderPay,rep:renderRep,set:renderSet})[on]();
+}
+function fillSelects(){
+  const opts=DB.labour.map(l=>`<option value="${l.id}">${esc(l.name)}</option>`).join('');
+  const keep=(id,html)=>{const s=$(id);const v=s.value;s.innerHTML=html;if([...s.options].some(o=>o.value===v))s.value=v};
+  keep('pLab',opts||'<option value="">— కూలీలను జోడించండి —</option>');
+  keep('pFil','<option value="">అందరూ</option>'+opts);
+  keep('rLab','<option value="">అందరూ</option>'+opts);
+}
+
+/* ---------- charts (pure SVG, offline) ---------- */
+function barSvg(vals,labels,color,fmt){
+  const W=Math.max(320,vals.length*38),H=170,pt=18,pb=34,max=Math.max(1,...vals);
+  const bw=(W-20)/vals.length;
+  let s=`<svg class="svgc" viewBox="0 0 ${W} ${H}" width="100%" style="max-height:220px">`;
+  vals.forEach((v,i)=>{
+    const h=(H-pt-pb)*v/max,x=10+i*bw+bw*.15,y=H-pb-h;
+    s+=`<rect x="${x}" y="${y}" width="${bw*.7}" height="${h}" rx="3" fill="${color}"/>`;
+    if(v>0)s+=`<text x="${x+bw*.35}" y="${y-3}" text-anchor="middle">${fmt?fmt(v):v}</text>`;
+    s+=`<text x="${x+bw*.35}" y="${H-pb+13}" text-anchor="middle">${esc(labels[i])}</text>`;
+  });
+  return s+'</svg>';
+}
+
+/* ---------- dashboard ---------- */
+function renderDash(){
+  const te=DB.att.reduce((s,a)=>s+earn(a),0),tp=DB.pay.reduce((s,p)=>s+p.amt,0);
+  const t=today(),pres=DB.att.filter(a=>a.date===t&&a.st!=='A').length;
+  const sts=DB.labour.map(l=>({l,s:status(l)}));
+  const stopped=sts.filter(x=>x.s.k==='stop').length,risk=sts.filter(x=>x.s.k==='risk').length;
+  $('dCards').innerHTML=`
+   <div class="card r"><div class="l">మొత్తం ఖర్చు (కూలి)</div><div class="v">${money(te)}</div></div>
+   <div class="card"><div class="l">మొత్తం చెల్లింపు</div><div class="v">${money(tp)}</div></div>
+   <div class="card b"><div class="l">మిగిలిన బాకీ</div><div class="v">${money(te-tp)}</div></div>
+   <div class="card"><div class="l">ఈ రోజు హాజరు</div><div class="v">${pres} / ${DB.labour.filter(l=>!l.off).length}</div></div>
+   <div class="card o"><div class="l">ప్రమాదం</div><div class="v">${risk}</div></div>
+   <div class="card r"><div class="l">పని ఆపినవారు</div><div class="v">${stopped}</div></div>`;
+  const days=[],vals=[];
+  for(let i=13;i>=0;i--){const d=addDays(t,-i);days.push(d.slice(8)+'/'+d.slice(5,7));vals.push(DB.att.filter(a=>a.date===d&&a.st!=='A').length)}
+  $('dChart1').innerHTML=barSvg(vals,days,'#2e9d57');
+  const ms=t.slice(0,7);
+  const per=DB.labour.map(l=>({n:l.name,v:DB.att.filter(a=>a.lid===l.id&&a.date.startsWith(ms)).reduce((s,a)=>s+earn(a),0)})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v).slice(0,10);
+  $('dChart2').innerHTML=per.length?barSvg(per.map(x=>x.v),per.map(x=>x.n.slice(0,6)),'#1e6fd0',v=>Math.round(v)):'<div class="empty">ఈ నెల డేటా లేదు</div>';
+  const al=sts.filter(x=>x.s.k==='stop'||x.s.k==='risk').sort((a,b)=>(b.s.d||0)-(a.s.d||0));
+  $('dAlerts').innerHTML=al.length?al.map(x=>`<div class="alert ${x.s.k==='stop'?'s':'r'}"><span><b>${esc(x.l.name)}</b> — ${x.s.d==null?'మాన్యువల్‌గా ఆపారు':x.s.d+' రోజులుగా పని లేదు'}</span>${badge(x.s)}</div>`).join(''):'<div class="empty">✅ అందరూ పని చేస్తున్నారు</div>';
+  const dues=DB.labour.map(l=>({l,b:totals(l.id).bal})).filter(x=>x.b>0.005).sort((a,b)=>b.b-a.b).slice(0,8);
+  $('dDues').innerHTML=dues.length?dues.map(x=>`<div class="alert" style="background:#f3f7f4"><span><b>${esc(x.l.name)}</b></span><b class="pos">${money(x.b)}</b></div>`).join(''):'<div class="empty">బాకీ ఏమీ లేదు 🎉</div>';
+}
+
+/* ---------- labour ---------- */
+function renderLab(){
+  const q=$('labQ').value.toLowerCase().trim(),f=$('labF').value;
+  let rows=DB.labour.map(l=>({l,s:status(l)})).filter(x=>(!q||x.l.name.toLowerCase().includes(q)||(x.l.mobile||'').includes(q))&&(!f||x.s.k===f||(f==='ok'&&x.s.k==='new')));
+  $('labBody').innerHTML=rows.length?rows.map((x,i)=>{const l=x.l,b=totals(l.id).bal;
+   return `<tr><td>${i+1}</td><td><b>${esc(l.name)}</b></td>
+   <td>${l.mobile?`<a href="tel:${esc(l.mobile)}">${esc(l.mobile)}</a>`:'-'}</td><td>${esc(l.addr)||'-'}</td>
+   <td>${l.type==='Fix'?'ఫిక్స్':'నిర్ణయించలేదు'}</td><td class="n">${money(l.rate)}</td>
+   <td class="n ${balCls(b)}">${money(b)}</td><td>${badge(x.s)}${x.s.d!=null&&x.s.k!=='ok'&&x.s.k!=='new'?`<div class="hint">${x.s.d} రోజులు</div>`:''}</td>
+   <td style="white-space:nowrap"><button class="btn sm blue" onclick="openLab(${l.id})">✏️</button>
+   <button class="btn sm ${l.off?'':'org'}" onclick="toggleOff(${l.id})">${l.off?'▶️ మళ్లీ ప్రారంభం':'⏸️ ఆపు'}</button>
+   ${l.mobile&&b>0.005?`<button class="btn sm" onclick="wa(${l.id})">💬</button>`:''}
+   <button class="btn sm red" onclick="delLab(${l.id})">🗑️</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty">కూలీలు లేరు — "➕ కొత్త కూలీ" నొక్కండి</td></tr>';
+}
+function openLab(id){
+  const l=id?lab(id):null;
+  $('labMT').textContent=l?'కూలీ వివరాలు మార్చండి':'కొత్త కూలీ';
+  $('lId').value=l?l.id:'';$('lName').value=l?l.name:'';$('lMob').value=l?l.mobile:'';$('lAddr').value=l?l.addr:'';
+  $('lType').value=l?l.type:'Fix';$('lRate').value=l?l.rate:'';
+  $('labModal').classList.add('on');setTimeout(()=>$('lName').focus(),50);
+}
+function closeM(){$('labModal').classList.remove('on')}
+function saveLab(){
+  const name=$('lName').value.trim();if(!name)return toast('పేరు రాయండి');
+  const mob=$('lMob').value.replace(/\D/g,'');
+  if(mob&&mob.length!==10)return toast('మొబైల్ 10 అంకెలు ఉండాలి');
+  const id=+$('lId').value;
+  const d={name,mobile:mob,addr:$('lAddr').value.trim(),type:$('lType').value,rate:+$('lRate').value||0};
+  if(id)Object.assign(lab(id),d);else DB.labour.push(Object.assign({id:uid(),off:false,joined:today()},d));
+  save();closeM();renderAll();toast('✓ సేవ్ అయింది');
+}
+function toggleOff(id){const l=lab(id);l.off=!l.off;if(!l.off)l.joined=today();save();renderAll();toast(l.off?'పని ఆపినట్లు గుర్తించారు':'మళ్లీ ప్రారంభం ✓')}
+function delLab(id){
+  if(!confirm(`"${lname(id)}" ను, వారి హాజరు & చెల్లింపు రికార్డులతో సహా తొలగించాలా?`))return;
+  DB.labour=DB.labour.filter(l=>l.id!==id);DB.att=DB.att.filter(a=>a.lid!==id);DB.pay=DB.pay.filter(p=>p.lid!==id);
+  save();renderAll();toast('తొలగించారు');
+}
+function wa(id){
+  const l=lab(id),t=totals(id);
+  const msg=`నమస్కారం ${l.name} గారు,\nమీ మొత్తం కూలి: ${money(t.earned)}\nచెల్లించినది: ${money(t.paid)}\nమిగిలిన బాకీ: ${money(t.bal)}\n- ${fmtD(today())}`;
+  window.open('https://wa.me/91'+l.mobile+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+/* ---------- attendance ---------- */
+function attToday(){$('attDate').value=today();renderAtt()}
+function shiftDay(n){$('attDate').value=addDays($('attDate').value||today(),n);renderAtt()}
+function findAtt(d,id){return DB.att.find(a=>a.date===d&&a.lid===id)}
+function renderAtt(){
+  if(!$('attDate').value)$('attDate').value=today();
+  const d=$('attDate').value;
+  const ls=DB.labour.filter(l=>!l.off);
+  let p=0,h=0,a=0,tot=0;
+  $('attBody').innerHTML=ls.length?ls.map((l,i)=>{
+    const r=findAtt(d,l.id);if(r){if(r.st==='P')p++;else if(r.st==='H')h++;else a++;tot+=earn(r)}
+    const st=r?r.st:'';
+    return `<tr><td>${i+1}</td><td><b>${esc(l.name)}</b></td>
+    <td class="att"><button class="P ${st==='P'?'on':''}" onclick="setAtt(${l.id},'P')">P</button><button class="H ${st==='H'?'on':''}" onclick="setAtt(${l.id},'H')">H</button><button class="A ${st==='A'?'on':''}" onclick="setAtt(${l.id},'A')">A</button></td>
+    <td class="n"><input type="number" id="am${l.id}" value="${r?r.amt:(l.type==='Fix'?l.rate:'')}" min="0" style="width:90px;text-align:right" onchange="setAmt(${l.id},this.value)"></td>
+    <td><input id="nt${l.id}" value="${esc(r?r.note:'')}" placeholder="నిమ్మ కోత / పిచికారీ..." onchange="setNote(${l.id},this.value)" style="width:100%;min-width:120px"></td>
+    <td class="n"><b>${r?money(earn(r)):'-'}</b></td></tr>`}).join(''):'<tr><td colspan="6" class="empty">ముందు "కూలీలు" ట్యాబ్‌లో కూలీలను జోడించండి</td></tr>';
+  $('attSum').innerHTML=`${fmtD(d)} — పూర్తి: ${p} · సగం: ${h} · గైర్హాజరు: ${a} · మొత్తం కూలి: <span style="color:var(--g)">${money(tot)}</span>`;
+}
+function setAtt(id,st){
+  const d=$('attDate').value,r=findAtt(d,id);
+  const amt=+$('am'+id).value||0,note=$('nt'+id).value.trim();
+  if(r&&r.st===st){DB.att=DB.att.filter(x=>x!==r)}
+  else if(r){r.st=st;r.amt=amt;r.note=note}
+  else DB.att.push({id:uid(),date:d,lid:id,st,amt,note});
+  if(st!=='A'&&amt===0)toast('⚠️ కూలి మొత్తం 0 ఉంది — నమోదు చేయండి');
+  save();renderAtt();
+}
+function setAmt(id,v){const r=findAtt($('attDate').value,id);if(r){r.amt=+v||0;save();renderAtt()}}
+function setNote(id,v){const r=findAtt($('attDate').value,id);if(r){r.note=v.trim();save()}}
+function markAll(st){
+  const d=$('attDate').value;let c=0;
+  DB.labour.filter(l=>!l.off).forEach(l=>{
+    if(!findAtt(d,l.id)){DB.att.push({id:uid(),date:d,lid:l.id,st,amt:l.type==='Fix'?l.rate:(+$('am'+l.id).value||0),note:''});c++}
+  });
+  save();renderAtt();toast(c?`${c} మందికి నమోదు ✓`:'అందరికీ ఇప్పటికే నమోదైంది');
+}
+function copyYesterday(){
+  const d=$('attDate').value,y=addDays(d,-1);let c=0;
+  DB.att.filter(a=>a.date===y).forEach(a=>{
+    const l=lab(a.lid);if(l&&!l.off&&!findAtt(d,a.lid)){DB.att.push({id:uid(),date:d,lid:a.lid,st:a.st,amt:a.amt,note:a.note});c++}
+  });
+  save();renderAtt();toast(c?`${c} రికార్డులు కాపీ అయ్యాయి`:'కాపీ చేయడానికి ఏమీ లేదు');
+}
+
+/* ---------- payments ---------- */
+function payHint(){
+  const id=+$('pLab').value;if(!id){$('pHint').textContent='';return}
+  const t=totals(id);$('pHint').innerHTML=`${esc(lname(id))}: కూలి ${money(t.earned)} · చెల్లించినది ${money(t.paid)} · బాకీ <b class="${balCls(t.bal)}">${money(t.bal)}</b>`;
+}
+function addPay(){
+  const id=+$('pLab').value,amt=+$('pAmt').value;
+  if(!id)return toast('కూలీని ఎంచుకోండి');if(!(amt>0))return toast('మొత్తం రాయండి');
+  const d=$('pDate').value||today();
+  DB.pay.push({id:uid(),date:d,lid:id,amt,type:$('pType').value,note:$('pNote').value.trim()});
+  save();$('pAmt').value='';$('pNote').value='';renderAll();payHint();toast('✓ చెల్లింపు సేవ్ అయింది');
+}
+function renderPay(){
+  if(!$('pDate').value)$('pDate').value=today();
+  payHint();
+  const f=+$('pFil').value||0;
+  const rows=DB.pay.filter(p=>!f||p.lid===f).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+  $('payBody').innerHTML=rows.length?rows.map((p,i)=>`<tr><td>${i+1}</td><td>${fmtD(p.date)}</td><td><b>${esc(lname(p.lid))}</b></td><td>${p.type==='Advance'?'అడ్వాన్స్':'చెల్లింపు'}</td><td class="n">${money(p.amt)}</td><td>${esc(p.note)||'-'}</td><td><button class="btn sm red" onclick="delPay(${p.id})">🗑️</button></td></tr>`).join('')+`<tr><td colspan="4" class="n"><b>మొత్తం</b></td><td class="n"><b>${money(rows.reduce((s,p)=>s+p.amt,0))}</b></td><td colspan="2"></td></tr>`:'<tr><td colspan="7" class="empty">చెల్లింపులు లేవు</td></tr>';
+}
+function delPay(id){if(confirm('ఈ చెల్లింపును తొలగించాలా?')){DB.pay=DB.pay.filter(p=>p.id!==id);save();renderAll()}}
+
+/* ---------- reports ---------- */
+function setRange(k){
+  const t=today();
+  if(k==='week'){const d=new Date();const dow=(d.getDay()+6)%7;$('rFrom').value=addDays(t,-dow);$('rTo').value=t}
+  else if(k==='month'){$('rFrom').value=t.slice(0,8)+'01';$('rTo').value=t}
+  else{$('rFrom').value='';$('rTo').value=''}
+  renderRep();
+}
+function inRange(d){const f=$('rFrom').value,t=$('rTo').value;return(!f||d>=f)&&(!t||d<=t)}
+function repData(){
+  const sel=+$('rLab').value||0;
+  return DB.labour.filter(l=>!sel||l.id===sel).map(l=>{
+    const at=DB.att.filter(a=>a.lid===l.id&&inRange(a.date));
+    const pays=DB.pay.filter(p=>p.lid===l.id&&inRange(p.date));
+    return{l,full:at.filter(a=>a.st==='P').length,half:at.filter(a=>a.st==='H').length,e:at.reduce((s,a)=>s+earn(a),0),p:pays.reduce((s,x)=>s+x.amt,0),bal:totals(l.id).bal};
+  });
+}
+function renderRep(){
+  const rows=repData();
+  const E=rows.reduce((s,r)=>s+r.e,0),P=rows.reduce((s,r)=>s+r.p,0),B=rows.reduce((s,r)=>s+r.bal,0),D=rows.reduce((s,r)=>s+r.full+r.half*.5,0);
+  $('rCards').innerHTML=`<div class="card r"><div class="l">కూలి ఖర్చు</div><div class="v">${money(E)}</div></div><div class="card"><div class="l">చెల్లింపులు</div><div class="v">${money(P)}</div></div><div class="card b"><div class="l">మొత్తం బాకీ (ఇప్పటివరకు)</div><div class="v">${money(B)}</div></div><div class="card o"><div class="l">పని దినాలు</div><div class="v">${D}</div></div>`;
+  $('rBody').innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.l.name)}</b></td><td class="n">${r.full}</td><td class="n">${r.half}</td><td class="n">${money(r.e)}</td><td class="n">${money(r.p)}</td><td class="n ${balCls(r.bal)}">${money(r.bal)}</td><td class="noprint"><button class="btn sm blue" onclick="ledger(${r.l.id})">📒 ఖాతా</button></td></tr>`).join('')+`<tr><td><b>మొత్తం</b></td><td></td><td></td><td class="n"><b>${money(E)}</b></td><td class="n"><b>${money(P)}</b></td><td class="n"><b>${money(B)}</b></td><td class="noprint"></td></tr>`:'<tr><td colspan="7" class="empty">డేటా లేదు</td></tr>';
+  const sel=+$('rLab').value;if(sel)ledger(sel);else $('ledgerBox').style.display='none';
+}
+function ledger(id){
+  const ev=[];
+  DB.att.filter(a=>a.lid===id&&a.st!=='A').forEach(a=>ev.push({d:a.date,t:(a.st==='H'?'సగం రోజు':'పూర్తి రోజు')+(a.note?' — '+a.note:''),c:earn(a),p:0}));
+  DB.pay.filter(p=>p.lid===id).forEach(p=>ev.push({d:p.date,t:(p.type==='Advance'?'అడ్వాన్స్':'చెల్లింపు')+(p.note?' — '+p.note:''),c:0,p:p.amt}));
+  ev.sort((a,b)=>a.d.localeCompare(b.d));
+  let bal=0;ev.forEach(e=>{bal+=e.c-e.p;e.b=bal});
+  const shown=ev.filter(e=>inRange(e.d));
+  $('ledgerTitle').textContent='📒 '+lname(id)+' — ఖాతా (Ledger)';
+  $('ledgerBody').innerHTML=shown.length?shown.map(e=>`<tr><td>${fmtD(e.d)}</td><td>${esc(e.t)}</td><td class="n">${e.c?money(e.c):'-'}</td><td class="n">${e.p?money(e.p):'-'}</td><td class="n ${balCls(e.b)}">${money(e.b)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">ఈ తేదీల్లో రికార్డులు లేవు</td></tr>';
+  $('ledgerBox').style.display='block';
+  if($('rLab').value!=String(id)){$('ledgerBox').scrollIntoView({behavior:'smooth'})}
+}
+
+/* ---------- settings ---------- */
+function renderSet(){$('sWarn').value=DB.set.warn;$('sStop').value=DB.set.stop}
+function saveSet(){
+  const w=+$('sWarn').value,s=+$('sStop').value;
+  if(!(w>=1)||!(s>w))return toast('"ఆపారు" రోజులు "ప్రమాదం" కంటే ఎక్కువ ఉండాలి');
+  DB.set={warn:w,stop:s};save();toast('✓ సేవ్ అయింది');
+}
+function download(name,content,type){
+  const b=new Blob([content],{type});const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
+function backup(){download('LEM_backup_'+today()+'.json',JSON.stringify(DB),'application/json');toast('బ్యాకప్ డౌన్‌లోడ్ అయింది')}
+function restore(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);if(!d.labour||!d.att||!d.pay)throw 0;
+    if(!confirm('ప్రస్తుత డేటా స్థానంలో బ్యాకప్ డేటా వస్తుంది. కొనసాగాలా?'))return;
+    DB=d;DB.set=Object.assign({warn:3,stop:7},DB.set||{});save();renderAll();toast('✓ రీస్టోర్ అయింది');
+  }catch(x){toast('తప్పు ఫైల్')}};
+  r.readAsText(f);e.target.value='';
+}
+function wipe(){
+  if(!confirm('మొత్తం డేటా శాశ్వతంగా తొలగిపోతుంది! ముందు బ్యాకప్ తీశారా?'))return;
+  if(prompt('నిర్ధారించడానికి DELETE అని టైప్ చేయండి')!=='DELETE')return;
+  DB={labour:[],att:[],pay:[],set:{warn:3,stop:7}};save();renderAll();toast('డేటా తొలగించారు');
+}
+
+/* ---------- Excel export (opens directly in Excel) ---------- */
+function exportXls(kind){
+  let head=[],rows=[],title='';
+  if(kind==='labour'){title='కూలీలు';head=['పేరు','మొబైల్','చిరునామా','పే టైప్','రోజు కూలి','మొత్తం కూలి','చెల్లించినది','బాకీ','స్థితి'];
+    rows=DB.labour.map(l=>{const t=totals(l.id);return[l.name,l.mobile,l.addr,l.type,l.rate,t.earned,t.paid,t.bal,status(l).t]})}
+  else if(kind==='payment'){title='చెల్లింపులు';head=['తేదీ','కూలీ','రకం','మొత్తం','గమనిక'];
+    rows=DB.pay.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(p=>[fmtD(p.date),lname(p.lid),p.type,p.amt,p.note])}
+  else{title='రిపోర్ట్';head=['కూలీ','పూర్తి రోజులు','సగం రోజులు','సంపాదన','చెల్లింపు','మొత్తం బాకీ'];
+    rows=repData().map(r=>[r.l.name,r.full,r.half,r.e,r.p,r.bal])}
+  const tb='<table border="1"><tr>'+head.map(h=>`<th style="background:#1b6b3a;color:#fff">${esc(h)}</th>`).join('')+'</tr>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${esc(c)}</td>`).join('')+'</tr>').join('')+'</table>';
+  download(`LEM_${kind}_${today()}.xls`,'\ufeff<html><head><meta charset="UTF-8"></head><body>'+tb+'</body></html>','application/vnd.ms-excel');
+  toast('📤 Excel డౌన్‌లోడ్ అయింది');
+}
+
+/* ---------- init ---------- */
+$('labModal').addEventListener('click',e=>{if(e.target.id==='labModal')closeM()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+load();renderAll();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').catch(function(){})}
+</script>
+</body>
+</html>
